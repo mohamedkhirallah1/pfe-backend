@@ -1,0 +1,28 @@
+export const TUNISIA_REGIONS = [
+  'Tunis',
+  'Ariana',
+  'Ben Arous',
+  'Manouba',
+  'Nabeul',
+  'Zaghouan',
+  'Bizerte',
+  'Beja',
+  'Jendouba',
+  'Le Kef',
+  'Siliana',
+  'Sousse',
+  'Monastir',
+  'Mahdia',
+  'Kairouan',
+  'Kasserine',
+  'Sidi Bouzid',
+  'Sfax',
+  'Gafsa',
+  'Tozeur',
+  'Kebili',
+  'Gabes',
+  'Medenine',
+  'Tataouine',
+] as const;
+
+export type TunisiaRegion = (typeof TUNISIA_REGIONS)[number];

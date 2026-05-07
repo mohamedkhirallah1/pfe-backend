@@ -1,0 +1,1 @@
+export { RabbitMqService } from './rabbitmq.service';
