@@ -2,7 +2,7 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class NewFdtEventDto {
   @IsString()
-  externalId: string;
+  externalId!: string;
 
   @IsOptional()
   @IsString()
@@ -13,8 +13,8 @@ export class NewFdtEventDto {
   regionId?: string;
 
   @IsNumber()
-  latitude: number;
+  latitude!: number;
 
   @IsNumber()
-  longitude: number;
+  longitude!: number;
 }

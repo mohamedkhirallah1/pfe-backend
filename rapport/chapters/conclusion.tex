@@ -1,0 +1,31 @@
+\chapter*{Conclusion g\'en\'erale et Perspectives}
+\addcontentsline{toc}{chapter}{Conclusion g\'en\'erale et Perspectives}
+
+\section*{Bilan des r\'ealisations}
+Ce projet de fin d'\'etudes, men\'e en collaboration avec \textbf{Tunisie Telecom}, s'est donn\'e pour ambition de concevoir et r\'ealiser une plateforme compl\`ete et unifi\'ee de supervision r\'eseau fibre optique (FTTH), combinant r\'eactivit\'e temps r\'eel, cartographie interactive et aide \`a la d\'ecision bas\'ee sur l'intelligence artificielle.
+
+L'ensemble des objectifs fix\'es au d\'epart a \'et\'e atteint avec succ\`es \`a travers trois releases incr\'ementales :
+\begin{itemize}
+    \item \textbf{Socle architectural et s\'ecurit\'e :} Mise en place d'une architecture client-serveur d\'ecoupl\'ee et robuste, s\'ecuris\'ee par JWT/RBAC et int\'egrant une gouvernance fine des acc\`es par zone g\'eographique.
+    \item \textbf{Supervision cartographique et temps r\'eel :} D\'eveloppement d'une application mobile en Flutter int\'egrant une carte g\'eographique interactive multi-couches (NRO, FDT, clients, pannes) synchronis\'ee instantan\'ement via des WebSockets (Socket.IO).
+    \item \textbf{Intelligence artificielle et r\'esilience :} Int\'egration r\'eussie du superviseur IA via Groq LLM pour l'enrichissement s\'emantique automatique des r\'eclamations et la d\'etection pr\'eventive de la saturation des NRO, appuy\'e par un patron de r\'esilience \textit{Circuit Breaker} avec repli heuristique.
+\end{itemize}
+
+\section*{D\'efis techniques surmont\'es}
+Durant les diff\'erentes phases du cycle de d\'eveloppement, plusieurs d\'efis techniques majeurs ont \'et\'e relev\'es :
+\begin{itemize}
+    \item \textbf{Performance du rendu cartographique mobile :} L'affichage fluide de nombreuses entit\'es g\'eom\'etriques a n\'ecessit\'e une indexation spatiale optimis\'ee sous MongoDB (\textit{2dsphere}) et des m\'ecanismes de filtrage par zone visible (\textit{Bounding Box}).
+    \item \textbf{R\'econciliation temps r\'eel :} La synchronisation transparente entre les \'ev\'enements serveur pouss\'es par WebSockets et l'\'etat applicatif local Flutter a \'et\'e r\'esolue efficacement gr\^ace \`a \textbf{Riverpod}.
+    \item \textbf{Tol\'erance aux pannes et gestion des quotas IA :} La mise en \oe uvre du Circuit Breaker garantit une continuit\'e totale de service m\^eme en cas d'indisponibilit\'e des services tiers.
+\end{itemize}
+
+\section*{Apports personnels et professionnels}
+Sur le plan personnel et technique, ce projet a constitu\'e une exp\'erience tr\`es enrichissante. Il nous a permis d'approfondir nos comp\'etences dans le d\'eveloppement full-stack moderne (NestJS, Flutter), l'ing\'enierie des syst\`emes temps r\'eel et g\'eospatiaux, l'int\'egration de l'IA g\'en\'erative en milieu d'entreprise, ainsi que l'application rigoureuse des pratiques d'ing\'enierie logicielle et de la m\'ethodologie Agile Scrum.
+
+\section*{Perspectives d'\'evolution}
+Pour prolonger les r\'esultats obtenus, plusieurs axes d'am\'elioration et perspectives futures peuvent \^etre envisag\'es :
+\begin{enumerate}
+    \item \textbf{Mode hors-ligne pour techniciens terrain :} Int\'egrer une base de donn\'ees locale embarqu\'ee (ex : Isar / SQLite) avec synchronisation diff\'er\'ee bidirectionnelle afin de permettre l'utilisation de l'application mobile m\^eme dans les sous-sols et zones d\'epourvues de couverture 4G/5G.
+    \item \textbf{Mod\`eles pr\'edictifs avanc\'es :} Entra\^iner des mod\`eles d'apprentissage automatique d\'edi\'es (\textit{Machine Learning / Time Series}) sur l'historique des pannes afin de pr\'edire les d\'efaillances d'\'equipements avant leur survenue.
+    \item \textbf{Interop\'erabilit\'e SIG avanc\'ee :} \'Etendre les capacit\'es d'import/export de fichiers cartographiques standardis\'es (Shapefile, GeoJSON, KML) pour une int\'egration directe avec les outils SIG d'entreprise comme QGIS ou ArcGIS.
+\end{enumerate}

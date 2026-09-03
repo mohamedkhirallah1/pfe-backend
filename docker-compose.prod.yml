@@ -1,0 +1,108 @@
+services:
+  # ==========================================
+  # 1. NestJS Main Application
+  # ==========================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smartfiber-backend
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - HOST=0.0.0.0
+      - BACKEND_URL=${BACKEND_URL:-http://localhost:3001}
+      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+      - WS_CORS_ORIGIN=${WS_CORS_ORIGIN:-*}
+      - MONGODB_URI=mongodb://mongodb:27017/smart_fiber
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-1d}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - BLIND_INDEX_PEPPER=${BLIND_INDEX_PEPPER}
+      - EVENTS_API_KEY=${EVENTS_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - GROQ_MODEL=${GROQ_MODEL:-openai/gpt-oss-120b}
+      - SEED_DEFAULT_ADMIN=${SEED_DEFAULT_ADMIN:-true}
+      - DEFAULT_ADMIN_USERNAME=${DEFAULT_ADMIN_USERNAME:-admin}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:-Admin123456!}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - backend_logs:/app/logs
+      - backend_scratch:/app/scratch
+      - backend_backups:/app/backups
+    networks:
+      - smartfiber-net
+
+  # ==========================================
+  # 2. MongoDB Database
+  # ==========================================
+  mongodb:
+    image: mongo:7.0
+    container_name: smartfiber-mongo
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - smartfiber-net
+
+  # ==========================================
+  # 3. Redis (BullMQ Queue & Cache)
+  # ==========================================
+  redis:
+    image: redis:7-alpine
+    container_name: smartfiber-redis
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - smartfiber-net
+
+  # ==========================================
+  # 4. Nginx Reverse Proxy & Web Host
+  # ==========================================
+  nginx:
+    image: nginx:alpine
+    container_name: smartfiber-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/html:/usr/share/nginx/html:ro
+      - ./nginx/certbot/conf:/etc/letsencrypt:ro
+      - ./nginx/certbot/www:/var/www/certbot:ro
+    depends_on:
+      - backend
+    networks:
+      - smartfiber-net
+
+volumes:
+  mongo_data:
+  redis_data:
+  backend_logs:
+  backend_scratch:
+  backend_backups:
+
+networks:
+  smartfiber-net:
+    driver: bridge

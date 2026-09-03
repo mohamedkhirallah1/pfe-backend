@@ -1,0 +1,222 @@
+\chapter{Contexte du projet et \'Etat de l'art}
+\label{chap:contexte}
+
+\section*{Introduction}
+Dans ce premier chapitre, nous introduisons le cadre g\'en\'eral de notre projet de fin d'\'etudes r\'ealis\'e au sein de \textbf{Tunisie Telecom}. Nous commen\c{c}ons par pr\'esenter l'organisme d'accueil, son positionnement strat\'egique et les sp\'ecificit\'es li\'ees \`a l'exploitation des r\'eseaux de fibre optique. Nous exposons ensuite l'\'etude de l'existant, la probl\'ematique m\'etier identifi\'ee et la solution globale propos\'ee. Enfin, nous justifions le choix de la m\'ethodologie de conduite de projet (Agile Scrum), le choix de l'architecture logicielle retenue (\'Ecosyst\`eme 3-Tiers d\'ecoupl\'e), ainsi qu'une revue d\'etaill\'ee des technologies front-end, back-end et d'infrastructure adopt\'ees.
+
+\section{Pr\'esentation de l'entreprise d'accueil}
+Le projet a \'et\'e r\'ealis\'e au sein de \textbf{Tunisie Telecom}, l'op\'erateur historique et leader des t\'el\'ecommunications en Tunisie. Fond\'e pour offrir des services t\'el\'ecoms int\'egr\'es (fixe, mobile, transmission de donn\'ees et acc\`es Internet tr\`es haut d\'ebit), l'op\'erateur dessert plusieurs millions d'abonn\'es r\'esidentiels et professionnels \`a travers tout le territoire tunisien.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=6cm]{Images/LOGO_TT_.png}
+ \caption{Logo officiel de Tunisie Telecom}
+ \label{fig:logo_tt}
+\end{figure}
+
+Dans le cadre du d\'eploiement massif de son r\'eseau \textbf{FTTH (Fiber To The Home)}, Tunisie Telecom g\`ere une infrastructure optique passive et active d'envergure nationale, articul\'ee autour de composants cl\'es :
+\begin{itemize}
+    \item \textbf{Le NRO (N\oe ud de Raccordement Optique) :} C\oe ur du r\'eseau local abritant les \'equipements actifs (OLT -- Optical Line Terminal) et assurant la distribution de la capacit\'e optique vers les diff\'erentes zones g\'eographiques.
+    \item \textbf{Le FDT (Fiber Distribution Terminal) :} Sous-r\'epartiteur optique interm\'ediaire o\`u les c\^ables de transport sont divis\'es en c\^ables de distribution vers les points de mutualisation et de branchement.
+    \item \textbf{Les contrats abonn\'es et raccordements :} Points terminaux reliant les clients finaux (ONT) aux infrastructures d'acc\`es.
+\end{itemize}
+
+Face \`a cette densification r\'eseau, la disponibilit\'e d'outils num\'eriques de cartographie dynamique, de supervision en temps r\'eel et d'aide automatis\'ee \`a la d\'ecision est devenue un imp\'eratif pour maintenir l'excellence op\'erationnelle.
+
+\section{Mission et objectifs du projet}
+La mission confi\'ee consiste \`a concevoir, d\'evelopper et d\'eployer une plateforme de supervision intelligente orient\'ee m\'etier, articul\'ee autour de deux composantes logicielles majeures :
+\begin{itemize}
+    \item Un \textbf{front-end mobile (Flutter)} d\'edi\'e aux techniciens terrain et aux responsables r\'egionaux ;
+    \item Une \textbf{API back-end (NestJS)} robuste centralisant la s\'ecurit\'e, le traitement des flux d'\'ev\'enements, la gestion cartographique et les services d'intelligence artificielle.
+\end{itemize}
+
+Les objectifs principaux du projet sont :
+\begin{itemize}
+    \item Assurer une \textbf{gouvernance stricte des acc\`es} bas\'ee sur les r\^oles (RBAC) et les p\'erim\`etres g\'eographiques (Zones d'affectation) ;
+    \item Offrir une \textbf{cartographie interactive multi-couches} permettant de visualiser et filtrer les NRO, FDT, clients et zones g\'eographiques ;
+    \item Mettre en place un \textbf{moteur temps r\'eel} pour la r\'eception instantan\'ee des \'ev\'enements m\'etier et des alertes de pannes ;
+    \item Int\'egrer des \textbf{modules d'IA d'aide \`a la d\'ecision} : enrichissement et classification intelligente des r\'eclamations abonn\'es, et calcul pr\'eventif des indices de saturation des NRO.
+\end{itemize}
+
+\section{\'Etude de l'existant et limites}
+Avant la mise en place de notre solution, le suivi op\'erationnel du r\'eseau reposait sur des processus semi-manuels et des outils dispers\'es. L'analyse critique de l'existant a mis en exergue plusieurs limites majeures :
+\begin{itemize}
+    \item \textbf{Fragmentation des sources d'information :} Manque de corr\'elation visuelle entre les incidents d\'eclar\'es et leur localisation exacte sur l'infrastructure physique.
+    \item \textbf{Absence de canal temps r\'eel natif :} Les \'equipes devaient actualiser manuellement leurs interfaces pour d\'etecter les nouveaux tickets d'incident.
+    \item \textbf{Processus d'escalade lent pour les r\'eclamations :} L'analyse textuelle des r\'eclamations \'etait effectu\'ee manuellement par les op\'erateurs de support, augmentant le d\'elai moyen de r\'esolution (MTTR).
+    \item \textbf{Gestion r\'eactive plut\^ot que pr\'eventive de la capacit\'e :} La saturation des \'equipements optiques \'etait g\'en\'eralement d\'ecouverte lors du refus d'activation d'un nouvel abonn\'e.
+\end{itemize}
+
+\section{Probl\'ematique et solution propos\'ee}
+
+\subsection{Probl\'ematique}
+Au regard des limites constat\'ees, la probl\'ematique de recherche et de d\'eveloppement se r\'esume ainsi :
+\begin{quote}
+\textit{\og Comment concevoir et mettre en \oe uvre une plateforme de supervision mobile et r\'eactive, capable d'unifier la visualisation cartographique des r\'eseaux optiques FTTH, d'assurer une ingestion d'\'ev\'enements temps r\'eel et d'int\'egrer des capacit\'es d'intelligence artificielle pour optimiser l'exploitation op\'erationnelle ? \fg}
+\end{quote}
+
+\subsection{Solution propos\'ee}
+Pour r\'epondre \`a cette probl\'ematique, nous proposons une architecture logicielle moderne fond\'ee sur le d\'ecouplage fonctionnel :
+\begin{itemize}
+    \item \textbf{Application mobile Flutter :} Une interface moderne, fluide (Material 3), offrant une cartographie enrichie (\textit{flutter\_map}), des tableaux de bord interactifs (\textit{fl\_chart}) et une gestion d'\'etat r\'eactive avec \textbf{Riverpod}.
+    \item \textbf{Plateforme serveur NestJS :} Une API structur\'ee selon les principes de la \textit{Clean Architecture}, int\'egrant une s\'ecurit\'e par jetons JWT sign\'es, une persistance optimis\'ee sous \textbf{MongoDB} avec index g\'eospatiaux 2dsphere, une passerelle \textbf{Socket.IO} pour la diffusion temps r\'eel et une file de t\^aches asynchrones \textbf{BullMQ/Redis}.
+    \item \textbf{Superviseur IA :} Un micro-module d'analyse s\'emantique exploitant l'inf\'erence LLM haute performance via Groq et des algorithmes d'analyse capacitaire.
+\end{itemize}
+
+\section{Choix de la m\'ethodologie de travail}
+
+\subsection{Comparatif : Approches traditionnelles vs M\'ethodes agiles}
+Le tableau~\ref{tab:metho} synth\'etise les diff\'erences entre les mod\`eles de d\'eveloppement s\'equentiels et les mod\`eles agiles.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{3.5cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+\textbf{Crit\`ere} & \textbf{Approches traditionnelles (Cascade/V)} & \textbf{M\'ethodes Agiles (Scrum)} \\
+\hline
+Cycle de d\'eveloppement & S\'equentiel, rigide et phases ferm\'ees & It\'eratif, incr\'emental et \'evolutif \\
+\hline
+Gestion du changement & Co\^uteuse, difficile et tardive & Continue, adaptative et flexible \\
+\hline
+Implication client/m\'etier & Limit\'ee aux phases initiales et finales & R\'eguli\`ere \`a chaque fin de sprint \\
+\hline
+Livraison & Monolithique en fin de projet & Incr\'ements fonctionnels fr\'equents \\
+\hline
+Traitement des risques & Risques d\'etect\'es tardivement & R\'esolution pr\'ecoce et continue \\
+\hline
+\end{tabular}
+\caption{Comparaison entre m\'ethodologies traditionnelles et m\'ethodes agiles}
+\label{tab:metho}
+\end{table}
+
+\subsection{M\'ethodologie retenue : Agile Scrum}
+Compte tenu de la complexit\'e technique (cartographie mobile, int\'egrations temps r\'eel et modules IA) et du besoin de valider r\'eguli\`erement les fonctionnalit\'es aupr\`es des utilisateurs, le framework \textbf{Scrum} a \'et\'e adopt\'e. 
+Le projet a \'et\'e structur\'e en 3 releases majeures compos\'ees de sprints d'une \`a deux semaines :
+\begin{itemize}
+    \item \textbf{Release 1 (S0 \`a S3) :} Cadrage, socle architectural, authentification et administration des utilisateurs ;
+    \item \textbf{Release 2 (S4 \`a S7) :} Supervision cartographique multi-couches, temps r\'eel et tableaux de bord KPI ;
+    \item \textbf{Release 3 (S8 \`a S11) :} Int\'egration de l'IA (Groq LLM \& saturation NRO), tests d'int\'egration et industrialisation.
+\end{itemize}
+
+\section{Choix architectural}
+
+\subsection{Comparatif des styles architecturaux}
+Le tableau~\ref{tab:archi} compare les principaux styles d'architecture logicielle.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{3.2cm}|p{3.8cm}|p{3.8cm}|p{4.2cm}|}
+\hline
+\textbf{Crit\`ere} & \textbf{Monolithique} & \textbf{Microservices} & \textbf{Client-Serveur modulaire 3-Tiers} \\
+\hline
+Complexit\'e initiale & Faible & Tr\`es \'elev\'ee & Mod\'er\'ee et ma\^itris\'ee \\
+\hline
+D\'ecouplage & Faible & Tr\`es \'elev\'e & \'Elev\'e (Front/Back/BDD isol\'es) \\
+\hline
+D\'eploiement & Unique et lourd & Distribu\'e (Orchestration complexe) & Simplifi\'e et ind\'ependant \\
+\hline
+Scalabilit\'e & Limit\'ee & Excellente & Tr\`es bonne par couche \\
+\hline
+Maintenabilit\'e & D\'egrad\'ee \`a terme & Co\^uteuse en infrastructure & Optimale pour \'equipe agile \\
+\hline
+\end{tabular}
+\caption{Comparaison des styles architecturaux}
+\label{tab:archi}
+\end{table}
+
+\subsection{Architecture retenue : Client-Serveur modulaire d\'ecoupl\'e (3-Tiers)}
+Nous avons retenu une \textbf{architecture 3-tiers modulaire et d\'ecoupl\'ee} :
+\begin{enumerate}
+    \item \textbf{Niveau Pr\'esentation (Front-end Mobile) :} Application mobile r\'ealis\'ee avec Flutter, organis\'ee selon le pattern \textit{Feature-First}. La logique d'affichage est strictement s\'epar\'ee de la logique m\'etier gr\^ace \`a \textbf{Riverpod}.
+    \item \textbf{Niveau Logique M\'etier (Back-end API) :} Serveur d'applications bas\'e sur NestJS, structur\'e en modules fonctionnels isol\'es (\textit{AuthModule, UsersModule, NetworkModule, AiSupervisorModule, RealtimeModule}). Chaque module applique le principe de s\'eparation en couches :
+    \begin{itemize}
+        \item \textbf{Controllers :} R\'eception des requ\^etes HTTP et validation des DTOs ;
+        \item \textbf{Services :} Logique m\'etier, algorithmes et r\`egles de gestion ;
+        \item \textbf{Gateways :} Gestion des connexions bidirectionnelles WebSocket (Socket.IO) ;
+        \item \textbf{Schemas / Models :} D\'efinition des mod\`eles ODM Mongoose.
+    \end{itemize}
+    \item \textbf{Niveau Donn\'ees et Persistance (Database \& Cache) :} 
+    \begin{itemize}
+        \item \textbf{MongoDB :} Base de donn\'ees orient\'ee documents avec support natif des index g\'eospatiaux \textit{2dsphere} ;
+        \item \textbf{Redis :} Stockage en m\'emoire pour l'orchestration des files de messages avec \textbf{BullMQ}.
+    \end{itemize}
+\end{enumerate}
+
+\section{\'Etat de l'art des technologies utilis\'ees}
+
+\subsection{Technologies Front-End Mobile}
+
+\subsubsection{Framework Mobile : Flutter / Dart}
+\textbf{Flutter}~\cite{flutter2025} est le framework open-source d\'evelopp\'e par Google pour concevoir des applications compil\'ees nativement pour mobile (Android, iOS), web et desktop depuis un code source unique. Le langage \textbf{Dart} fournit un typage statique fort et une ex\'ecution tr\`es performante via compilation AOT (\textit{Ahead-Of-Time}).
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=5cm]{Images/flutter.png}
+ \caption{Framework Flutter / Dart}
+ \label{fig:flutter}
+\end{figure}
+
+\subsubsection{Gestion d'\'etat : Riverpod}
+\textbf{Riverpod}~\cite{riverpod2025} est une solution avanc\'ee de gestion d'\'etat r\'eactive pour Flutter. Elle garantit la s\'ecurit\'e \`a la compilation (\textit{compile-safe}), \'elimine les d\'ependances globales directes (\textit{BuildContext}), et optimise les rendus de widgets en \'evitant les reconstructions inutiles d'\'ecrans.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=4.5cm]{Images/riverpod.png}
+ \caption{Gestion d'\'etat r\'eactive avec Riverpod}
+ \label{fig:riverpod}
+\end{figure}
+
+\subsubsection{Client HTTP : Dio}
+\textbf{Dio}~\cite{dio2025} est un client HTTP puissant pour Dart, supportant les intercepteurs (\textit{Interceptors}) permettant d'injecter automatiquement les tokens JWT dans les en-t\^etes de requ\^etes et de g\'erer le renouvellement automatique (\textit{Token Refresh}) en cas d'expiration.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=4.5cm]{Images/dio.png}
+ \caption{Client r\'eseau Dio pour Flutter}
+ \label{fig:dio}
+\end{figure}
+
+\subsubsection{Cartographie interactive : flutter\_map et latlong2}
+La biblioth\`eque \textbf{flutter\_map}~\cite{fluttermap2025} bas\'ee sur les tuiles OpenStreetMap permet de superposer dynamiquement des couches g\'eographiques (polygones de zones de couverture, marqueurs personnalis\'es de NRO/FDT et trac\'es de liaisons optiques).
+
+\subsection{Technologies Back-End et Persistance}
+
+\subsubsection{Framework Back-End : NestJS / TypeScript}
+\textbf{NestJS}~\cite{nestjs2025} est un framework Node.js d'entreprise fond\'e sur TypeScript. Il b\'en\'eficie d'une architecture modulaire inspir\'ee d'Angular (Injection de D\'ependances, D\'ecorateurs, Middlewares, Guards et Intercepteurs), garantissant une tr\`es grande maintenabilit\'e et testabilit\'e.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=4.5cm]{Images/nestjs.png}
+ \caption{Framework serveur NestJS}
+ \label{fig:nestjs}
+\end{figure}
+
+\subsubsection{Base de donn\'ees : MongoDB \& ODM Mongoose}
+\textbf{MongoDB}~\cite{mongodb2025} est un syst\`eme de gestion de base de donn\'ees NoSQL orient\'e documents JSON/BSON. Associ\'e \`a l'ODM \textbf{Mongoose}, il permet d'exploiter des index g\'eospatiaux \textit{2dsphere} indispensables pour ex\'ecuter des requ\^etes spatiales complexes (\texttt{\$geoWithin}, \texttt{\$near}, \texttt{\$geoIntersects}).
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=4.5cm]{Images/mongodb.png}
+ \caption{Base de donn\'ees NoSQL MongoDB}
+ \label{fig:mongodb}
+\end{figure}
+
+\subsubsection{Traitement asynchrone et files de t\^aches : BullMQ + Redis}
+\textbf{BullMQ}~\cite{bullmq2025}, aliment\'e par \textbf{Redis}, permet d'ing\'erer des volumes \'elev\'es d'\'ev\'enements m\'etier en arri\`ere-plan sans bloquer la boucle d'\'ev\'enements principale du serveur Node.js.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=4.5cm]{Images/bullmq.png}
+ \caption{Orchestration asynchrone BullMQ \& Redis}
+ \label{fig:bullmq}
+\end{figure}
+
+\subsection{Environnement de d\'eveloppement, tests et d\'eploiement}
+\begin{itemize}
+    \item \textbf{Vercel / Cloud Infrastructure}~\cite{vercel2025} : Utilis\'e pour l'h\'ebergement cloud continu et la centralisation des configurations d'environnement.
+    \item \textbf{Backend Mock Local} : Utilis\'e durant les phases de d\'eveloppement initial pour simuler les \'equipements t\'el\'ecoms distants et valider les sc\'enarios d'injection d'\'ev\'enements de test.
+    \item \textbf{Journalisation structur\'ee (Qlog / Winston)} : Assure la tra\c{c}abilit\'e, l'audit des requ\^etes et la r\'esolution rapide des anomalies de production.
+\end{itemize}
+
+\section*{Conclusion}
+Ce premier chapitre a permis d'ancrer le projet dans son contexte industriel aupr\`es de \textbf{Tunisie Telecom} et de poser les fondements m\'ethodologiques et architecturaux. Nous avons justifi\'e l'adoption d'Agile Scrum, d'une architecture client-serveur modulaire 3-tiers, et d'une suite technologique moderne (Flutter, NestJS, MongoDB, Socket.IO, BullMQ). Le chapitre suivant sera consacr\'e \`a la sp\'ecification d\'etaill\'ee des besoins et \`a la conception globale du syst\`eme.

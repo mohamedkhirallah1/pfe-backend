@@ -3,9 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AppRole } from './roles.enum';
+import { getRequiredJwtSecret } from '../../common/config/jwt-secret.util';
 
 type JwtPayload = {
   sub: string;
+  email?: string;
   role: AppRole;
   zoneId?: string;
 };
@@ -16,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET', 'change-me'),
+      secretOrKey: getRequiredJwtSecret(configService),
     });
   }
 

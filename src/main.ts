@@ -1,7 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import helmet from 'helmet';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { MetricsService } from './common/metrics/metrics.service';
+import { QlogService } from './common/qlog/qlog.service';
+import { QlogContextService } from './common/qlog/qlog-context.service';
 import { createServer } from 'net';
 
 async function isPortAvailable(port: number): Promise<boolean> {
@@ -63,6 +67,53 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
 
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
+
+  const allowedOriginPatterns = [
+    /^http:\/\/localhost:(3000|3001|5173|5174|5175|4173)$/,
+    /^http:\/\/127\.0\.0\.1:(3000|3001|5173|5174|5175|4173)$/,
+    /^http:\/\/192\.168\.\d+\.\d+:(3000|3001|5173|5174|5175|4173)$/,
+    /^http:\/\/172\.\d+\.\d+\.\d+:(3000|3001|5173|5174|5175|4173)$/,
+    /^http:\/\/10\.0\.2\.2:(3000|3001|5173|5174|5175|4173)$/,
+  ];
+
+  const envOrigins = (process.env.CORS_ORIGIN ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  app.enableCors({
+    origin: (requestOrigin, callback) => {
+      if (!requestOrigin) {
+        return callback(null, true);
+      }
+      if (
+        envOrigins.includes(requestOrigin) ||
+        allowedOriginPatterns.some((pattern) => pattern.test(requestOrigin))
+      ) {
+        return callback(null, true);
+      }
+      callback(null, false);
+    },
+    credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'x-api-key',
+      'Accept',
+      'Origin',
+      'X-Requested-With',
+      'x-request-id',
+      'x-correlation-id',
+    ],
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -70,7 +121,14 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  app.useGlobalFilters(new HttpExceptionFilter());
+  const metricsService = app.get(MetricsService);
+  const qlogService = app.get(QlogService);
+  const qlogContextService = app.get(QlogContextService);
+
+  app.useLogger(qlogService);
+  app.useGlobalFilters(
+    new HttpExceptionFilter(metricsService, qlogService, qlogContextService),
+  );
 
   await app.listen(port, host);
 

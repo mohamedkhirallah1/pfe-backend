@@ -1,11 +1,22 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, Optional } from '@nestjs/common';
 import { RabbitMqService } from '../rabbitmq/rabbitmq.service';
+import { MetricsService } from '../../common/metrics/metrics.service';
 
 export type InboundEventType =
   | 'NEW_CONTRACT'
-  | 'NEW_NRO'
+  | 'UPDATE_CONTRACT'
   | 'CANCEL_CONTRACT'
+  | 'NEW_NRO'
+  | 'UPDATE_NRO'
+  | 'DELETE_NRO'
+  | 'NEW_FDT'
+  | 'UPDATE_FDT'
+  | 'DELETE_FDT'
+  | 'NEW_CENTRALE'
+  | 'UPDATE_CENTRALE'
+  | 'DELETE_CENTRALE'
   | 'NEW_RECLAMATION'
+  | 'TOPOLOGY_UPDATED'
   | 'TEST';
 
 export type NormalizedEvent = {
@@ -21,13 +32,26 @@ export class EventsService {
 
   private readonly allowedEventTypes = new Set<InboundEventType>([
     'NEW_CONTRACT',
-    'NEW_NRO',
+    'UPDATE_CONTRACT',
     'CANCEL_CONTRACT',
+    'NEW_NRO',
+    'UPDATE_NRO',
+    'DELETE_NRO',
+    'NEW_FDT',
+    'UPDATE_FDT',
+    'DELETE_FDT',
+    'NEW_CENTRALE',
+    'UPDATE_CENTRALE',
+    'DELETE_CENTRALE',
     'NEW_RECLAMATION',
+    'TOPOLOGY_UPDATED',
     'TEST',
   ]);
 
-  constructor(private readonly rabbitMqService: RabbitMqService) {}
+  constructor(
+    private readonly rabbitMqService: RabbitMqService,
+    @Optional() private readonly metricsService?: MetricsService,
+  ) {}
 
   async dispatchInternalEvent(
     route: string,
@@ -43,6 +67,7 @@ export class EventsService {
     };
 
     this.logger.log(`[EVENT RECEIVED] route=${route} type=${eventType} source=${source}`);
+    this.metricsService?.recordEventIngestion(eventType, 'success');
     await this.enqueueWithRetry(event, 3, 300);
 
     return event;
@@ -88,7 +113,8 @@ export class EventsService {
       throw new BadRequestException('payload must not be empty');
     }
 
-    if (eventType === 'NEW_CONTRACT' || eventType === 'NEW_NRO' || eventType === 'NEW_RECLAMATION') {
+    const requiresLocation = ['NEW_CONTRACT', 'NEW_NRO', 'NEW_FDT', 'NEW_CENTRALE', 'NEW_RECLAMATION'];
+    if (requiresLocation.includes(eventType)) {
       if (!this.hasValidLocation(payload)) {
         throw new BadRequestException('payload.location (latitude/longitude) is required');
       }
@@ -114,26 +140,33 @@ export class EventsService {
     return data;
   }
 
-  async enqueueWithRetry(event: NormalizedEvent, retries = 3, baseDelayMs = 300): Promise<void> {
-    let attempt = 0;
+  private async enqueueWithRetry(
+    event: NormalizedEvent,
+    maxAttempts = 3,
+    delayMs = 300,
+  ): Promise<void> {
+    let lastError: unknown;
 
-    while (attempt < retries) {
-      attempt += 1;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         await this.rabbitMqService.enqueueExternalEvent(event);
-        this.logger.log(`[EVENT QUEUED] type=${event.eventType} attempt=${attempt}`);
         return;
       } catch (error) {
-        const message = (error as Error).message;
-        this.logger.error(`[EVENT FAILED] queue type=${event.eventType} attempt=${attempt} error=${message}`);
+        lastError = error;
+        this.logger.warn(
+          `[EVENT ENQUEUE RETRY] attempt=${attempt}/${maxAttempts} error=${(error as Error).message}`,
+        );
 
-        if (attempt >= retries) {
-          throw error;
+        if (attempt < maxAttempts) {
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
         }
-
-        const delay = baseDelayMs * attempt;
-        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
+
+    this.logger.error(
+      `[EVENT ENQUEUE FAILED] maxAttempts reached for eventType=${event.eventType}`,
+      lastError instanceof Error ? lastError.stack : undefined,
+    );
+    throw lastError;
   }
 }

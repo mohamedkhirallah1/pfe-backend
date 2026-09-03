@@ -1,5 +1,7 @@
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit, Optional } from '@nestjs/common';
 import { JobsOptions, Queue, Worker } from 'bullmq';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 import IORedis from 'ioredis';
 import { CancelContractEventDto } from '../contracts/dto/cancel-contract-event.dto';
 import { NewContractEventDto } from '../contracts/dto/new-contract-event.dto';
@@ -14,6 +16,7 @@ import { NroConsumer } from './consumers/nro.consumer';
 import { ReclamationConsumer } from './consumers/reclamation.consumer';
 import { DomainProcessResult, SocketEmission } from './rabbitmq.types';
 import { WebsocketBroadcastGateway } from '../websocket-server/websocket-broadcast.gateway';
+import { QlogService } from '../../common/qlog/qlog.service';
 
 @Injectable()
 export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
@@ -40,6 +43,7 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     private readonly reclamationConsumer: ReclamationConsumer,
     private readonly nroConsumer: NroConsumer,
     private readonly fdtConsumer: FdtConsumer,
+    @Optional() private readonly qlog?: QlogService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -49,10 +53,40 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
       maxRetriesPerRequest: null,
       enableReadyCheck: false,
     });
+    // An ioredis client with no 'error' listener crashes the process on connection errors
+    // (unhandled 'error' event) instead of just logging and letting ioredis's own retry kick in.
+    this.producerConnection.on('error', (err) => {
+      this.qlog?.error(`[Redis Producer Error] ${err.message}`, err.stack, 'RabbitMqService', {
+        component: 'redis',
+        role: 'producer',
+        event: 'connection_error',
+      });
+    });
+    this.producerConnection.on('connect', () => {
+      this.qlog?.info('Redis producer connection established', 'RabbitMqService', {
+        component: 'redis',
+        role: 'producer',
+        event: 'connected',
+      });
+    });
 
     this.workerConnection = new IORedis(redisUrl, {
       maxRetriesPerRequest: null,
       enableReadyCheck: false,
+    });
+    this.workerConnection.on('error', (err) => {
+      this.qlog?.error(`[Redis Worker Error] ${err.message}`, err.stack, 'RabbitMqService', {
+        component: 'redis',
+        role: 'worker',
+        event: 'connection_error',
+      });
+    });
+    this.workerConnection.on('connect', () => {
+      this.qlog?.info('Redis worker connection established', 'RabbitMqService', {
+        component: 'redis',
+        role: 'worker',
+        event: 'connected',
+      });
     });
 
     this.queue = new Queue(this.queueName, {
@@ -63,23 +97,50 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     this.worker = new Worker(
       this.queueName,
       async (job) => {
+        const jobStartTime = Date.now();
+        this.qlog?.logBullMq({
+          queueName: this.queueName,
+          jobName: job.name,
+          jobId: job.id,
+          event: 'started',
+          attempt: job.attemptsMade + 1,
+        });
+
+        // processDomainEvent already writes to MongoDB and its handlers are idempotent on retry
+        // (upsert-by-externalId, or an early return when the entity is already in its target
+        // state). Broadcasting to connected sockets is a best-effort side effect on top of that:
+        // if it throws, we must not let BullMQ mark the job "failed" and retry it — the DB
+        // mutation already happened, so a retry would only risk duplicate broadcasts, not fix
+        // anything. Broadcast failures are logged, not rethrown.
         const result = await this.processDomainEvent(job.data);
-        this.logger.log(`[EVENT PROCESSED] job=${job.name} id=${job.id}`);
+        const durationMs = Date.now() - jobStartTime;
+        this.qlog?.logBullMq({
+          queueName: this.queueName,
+          jobName: job.name,
+          jobId: job.id,
+          event: 'completed',
+          durationMs,
+          attempt: job.attemptsMade + 1,
+        });
 
-        this.websocketBroadcastGateway.broadcastExternalEvent(job.data);
-        this.logger.log(`[EVENT BROADCAST] channel=external.event jobId=${job.id}`);
+        try {
+          this.websocketBroadcastGateway.broadcastExternalEvent(job.data);
 
-        for (const socketEvent of result.socketEvents) {
-          this.websocketBroadcastGateway.broadcastEvent(socketEvent.event, socketEvent.payload);
-          this.logger.log(`[EVENT BROADCAST] channel=${socketEvent.event} jobId=${job.id}`);
+          for (const socketEvent of result.socketEvents) {
+            this.websocketBroadcastGateway.broadcastEvent(socketEvent.event, socketEvent.payload);
+          }
+
+          if (result.mapUpdate) {
+            this.websocketBroadcastGateway.broadcastMapUpdate(result.mapUpdate);
+          }
+        } catch (error) {
+          this.qlog?.error(
+            `[Event Broadcast Failed] job=${job.name} id=${job.id} reason=${(error as Error).message}`,
+            (error as Error).stack,
+            'RabbitMqService',
+            { jobId: job.id, jobName: job.name },
+          );
         }
-
-        if (result.mapUpdate) {
-          this.websocketBroadcastGateway.broadcastMapUpdate(result.mapUpdate);
-          this.logger.log(`[EVENT BROADCAST] channel=map.updated jobId=${job.id}`);
-        }
-
-        this.logger.log(`[BULLMQ BROADCAST] job=${job.name} id=${job.id}`);
       },
       {
         connection: this.workerConnection,
@@ -87,17 +148,27 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     );
 
     this.worker.on('failed', (job, err) => {
-      this.logger.error(
-        `[EVENT FAILED] ` +
-        `[BULLMQ FAILED] job=${job?.name} id=${job?.id} reason=${err.message}`,
-      );
+      this.qlog?.logBullMq({
+        queueName: this.queueName,
+        jobName: job?.name || 'unknown',
+        jobId: job?.id,
+        event: 'failed',
+        attempt: job?.attemptsMade,
+        error: err.message,
+      });
     });
 
     this.worker.on('error', (err) => {
-      this.logger.error(`[BULLMQ ERROR] ${err.message}`);
+      this.qlog?.error(`[BullMQ Worker Error] ${err.message}`, err.stack, 'RabbitMqService', {
+        component: 'bullmq',
+        event: 'worker_error',
+      });
     });
 
-    this.logger.log(`BullMQ initialized on queue ${this.queueName} using ${redisUrl}`);
+    this.qlog?.info(`BullMQ initialized on queue "${this.queueName}"`, 'RabbitMqService', {
+      queueName: this.queueName,
+      event: 'initialized',
+    });
   }
 
   async enqueueExternalEvent(payload: unknown): Promise<void> {
@@ -107,11 +178,48 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
 
     try {
       const job = await this.queue.add('external.event', payload);
-      this.logger.log(`[BULLMQ PRODUCER] Enqueued job id=${job.id}`);
+      this.qlog?.logBullMq({
+        queueName: this.queueName,
+        jobName: 'external.event',
+        jobId: job.id,
+        event: 'created',
+      });
     } catch (error) {
-      this.logger.error(`[BULLMQ PRODUCER ERROR] ${(error as Error).message}`);
+      this.qlog?.error(
+        `[BullMQ Producer Error] ${(error as Error).message}`,
+        (error as Error).stack,
+        'RabbitMqService',
+        { event: 'enqueue_failed' },
+      );
       throw error;
     }
+  }
+
+  /**
+   * The toXxxPayload() extractors below tolerate loosely-shaped upstream data (multiple possible
+   * key names, string/number coercion). Once they've produced a candidate object, this runs the
+   * DTO's actual class-validator rules (enum values, string/number typing) before it reaches the
+   * domain services — previously payloads were only cast `as Dto` with no real validation, so a
+   * malformed value (e.g. an invalid typeClient) would only fail later as a Mongoose error, after
+   * side effects (NRO capacity mutation) may already have happened.
+   */
+  private async validateEvent<T extends object>(
+    dtoClass: new () => T,
+    candidate: object,
+  ): Promise<T | null> {
+    const instance = plainToInstance(dtoClass, candidate);
+    const errors = await validate(instance, { whitelist: true, forbidNonWhitelisted: false });
+
+    if (errors.length > 0) {
+      const details = errors.map((error) => ({
+        property: error.property,
+        constraints: error.constraints,
+      }));
+      this.logger.warn(`[BULLMQ VALIDATION] ${dtoClass.name} rejected: ${JSON.stringify(details)}`);
+      return null;
+    }
+
+    return instance;
   }
 
   private async processDomainEvent(rawData: unknown): Promise<DomainProcessResult> {
@@ -134,10 +242,15 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     }
 
     if (eventType === 'contracts.new') {
-      const payload = this.toNewContractPayload(envelope.businessPayload);
+      const candidate = this.toNewContractPayload(envelope.businessPayload);
 
-      if (!payload) {
+      if (!candidate) {
         this.logger.warn(`[BULLMQ PROCESS] Invalid contracts.new payload: ${JSON.stringify(rawData)}`);
+        return { socketEvents: [], mapUpdate: null };
+      }
+
+      const payload = await this.validateEvent(NewContractEventDto, candidate);
+      if (!payload) {
         return { socketEvents: [], mapUpdate: null };
       }
 
@@ -145,12 +258,17 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     }
 
     if (eventType === 'contracts.cancel') {
-      const payload = this.toCancelContractPayload(envelope.businessPayload);
+      const candidate = this.toCancelContractPayload(envelope.businessPayload);
 
-      if (!payload) {
+      if (!candidate) {
         this.logger.warn(
           `[BULLMQ PROCESS] Invalid contracts.cancel payload: ${JSON.stringify(rawData)}`,
         );
+        return { socketEvents: [], mapUpdate: null };
+      }
+
+      const payload = await this.validateEvent(CancelContractEventDto, candidate);
+      if (!payload) {
         return { socketEvents: [], mapUpdate: null };
       }
 
@@ -158,12 +276,17 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     }
 
     if (eventType === 'reclamations.new') {
-      const payload = this.toNewReclamationPayload(envelope.businessPayload);
+      const candidate = this.toNewReclamationPayload(envelope.businessPayload);
 
-      if (!payload) {
+      if (!candidate) {
         this.logger.warn(
           `[BULLMQ PROCESS] Invalid reclamations.new payload: ${JSON.stringify(rawData)}`,
         );
+        return { socketEvents: [], mapUpdate: null };
+      }
+
+      const payload = await this.validateEvent(NewReclamationEventDto, candidate);
+      if (!payload) {
         return { socketEvents: [], mapUpdate: null };
       }
 
@@ -171,10 +294,15 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     }
 
     if (eventType === 'nro.new') {
-      const payload = this.toNewNroPayload(envelope.businessPayload);
+      const candidate = this.toNewNroPayload(envelope.businessPayload);
 
-      if (!payload) {
+      if (!candidate) {
         this.logger.warn(`[BULLMQ PROCESS] Invalid nro.new payload: ${JSON.stringify(rawData)}`);
+        return { socketEvents: [], mapUpdate: null };
+      }
+
+      const payload = await this.validateEvent(NewNroEventDto, candidate);
+      if (!payload) {
         return { socketEvents: [], mapUpdate: null };
       }
 
@@ -182,10 +310,15 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     }
 
     if (eventType === 'nro.update') {
-      const payload = this.toUpdateNroPayload(envelope.businessPayload);
+      const candidate = this.toUpdateNroPayload(envelope.businessPayload);
 
-      if (!payload) {
+      if (!candidate) {
         this.logger.warn(`[BULLMQ PROCESS] Invalid nro.update payload: ${JSON.stringify(rawData)}`);
+        return { socketEvents: [], mapUpdate: null };
+      }
+
+      const payload = await this.validateEvent(UpdateNroEventDto, candidate);
+      if (!payload) {
         return { socketEvents: [], mapUpdate: null };
       }
 
@@ -193,10 +326,15 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     }
 
     if (eventType === 'nro.delete') {
-      const payload = this.toDeleteNroPayload(envelope.businessPayload);
+      const candidate = this.toDeleteNroPayload(envelope.businessPayload);
 
-      if (!payload) {
+      if (!candidate) {
         this.logger.warn(`[BULLMQ PROCESS] Invalid nro.delete payload: ${JSON.stringify(rawData)}`);
+        return { socketEvents: [], mapUpdate: null };
+      }
+
+      const payload = await this.validateEvent(DeleteNroEventDto, candidate);
+      if (!payload) {
         return { socketEvents: [], mapUpdate: null };
       }
 
@@ -204,14 +342,29 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     }
 
     if (eventType === 'fdt.new') {
-      const payload = this.toNewFdtPayload(envelope.businessPayload);
+      const candidate = this.toNewFdtPayload(envelope.businessPayload);
 
-      if (!payload) {
+      if (!candidate) {
         this.logger.warn(`[BULLMQ PROCESS] Invalid fdt.new payload: ${JSON.stringify(rawData)}`);
         return { socketEvents: [], mapUpdate: null };
       }
 
+      const payload = await this.validateEvent(NewFdtEventDto, candidate);
+      if (!payload) {
+        return { socketEvents: [], mapUpdate: null };
+      }
+
       return this.fdtConsumer.handleNewFdtEvent(payload);
+    }
+
+    if (eventType === 'topology.updated') {
+      return {
+        socketEvents: [
+          { event: 'topology.updated', payload: envelope.businessPayload },
+          { event: 'map.updated', payload: envelope.businessPayload },
+        ],
+        mapUpdate: envelope.businessPayload,
+      };
     }
 
     return { socketEvents: [], mapUpdate: null };
@@ -275,6 +428,7 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     | 'nro.update'
     | 'nro.delete'
     | 'fdt.new'
+    | 'topology.updated'
     | null {
     const directRaw = this.readString(data, ['type', 'eventType', 'event', 'queue']);
     const nestedRaw = this.readString(this.unwrapPayload(data), ['type', 'eventType', 'event', 'queue']);
@@ -329,6 +483,18 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
       return 'fdt.new';
     }
 
+    if (
+      [
+        'topology_updated',
+        'topology.updated',
+        'topology_update',
+        'topology.update',
+        'topologyupdated',
+      ].includes(value)
+    ) {
+      return 'topology.updated';
+    }
+
     return null;
   }
 
@@ -342,9 +508,30 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     const longitude =
       this.readNumber(data, ['longitude', 'lng', 'lon']) ??
       this.readNumber(location, ['longitude', 'lng', 'lon']);
-    const bandwidth = this.readNumber(data, ['bandwidth', 'forfait']) ?? 0;
 
-    if (!externalId || latitude === null || longitude === null) {
+    // New required fields
+    const numeroTelephone = this.readString(data, ['numeroTelephone', 'numero_telephone', 'telephone', 'phone', 'phoneNumber']);
+    const numeroCIN = this.readString(data, ['numeroCIN', 'numero_cin', 'cin', 'cinNumber']);
+    const offreGB = this.readNumber(data, ['offreGB', 'offre', 'packageGb', 'bandwidth', 'forfait']);
+    const typeClient = this.readString(data, ['typeClient', 'clientType', 'type_client']);
+
+    const bandwidth = this.readNumber(data, ['bandwidth', 'forfait']) ?? (offreGB ?? 0);
+
+    // traceFDT may be provided as an array of coordinates
+    let traceFDT: [number, number][] | undefined = undefined;
+    const rawTrace = data['traceFDT'] ?? data['trace'] ?? data['path'];
+    if (Array.isArray(rawTrace)) {
+      try {
+        const coords = rawTrace as unknown as Array<unknown>;
+        if (coords.length > 0 && Array.isArray(coords[0])) {
+          traceFDT = coords.map((c) => (c as any).map(Number)) as [number, number][];
+        }
+      } catch (e) {
+        traceFDT = undefined;
+      }
+    }
+
+    if (!externalId || latitude === null || longitude === null || !numeroTelephone || !numeroCIN || offreGB === null || !typeClient) {
       return null;
     }
 
@@ -352,10 +539,15 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
       externalId,
       phoneNumber: phoneNumber ?? undefined,
       cin: cin ?? undefined,
+      numeroTelephone,
+      numeroCIN,
       latitude,
       longitude,
       bandwidth,
-    };
+      offreGB,
+      typeClient: typeClient as any,
+      traceFDT,
+    } as NewContractEventDto;
   }
 
   private toCancelContractPayload(data: Record<string, unknown>): CancelContractEventDto | null {
@@ -374,13 +566,14 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     const phoneNumber = this.readString(data, ['phoneNumber', 'phone']);
     const cin = this.readString(data, ['cin']);
     const type = this.readString(data, ['type', 'issueType', 'category']);
+    const numeroCIN = this.readString(data, ['numeroCIN', 'numero_cin', 'cin', 'cinNumber']);
     const latitude =
       this.readNumber(data, ['latitude', 'lat']) ?? this.readNumber(location, ['latitude', 'lat']);
     const longitude =
       this.readNumber(data, ['longitude', 'lng', 'lon']) ??
       this.readNumber(location, ['longitude', 'lng', 'lon']);
 
-    if (!externalId || !type || latitude === null || longitude === null) {
+    if (!externalId || !type || !numeroCIN || latitude === null || longitude === null) {
       return null;
     }
 
@@ -388,6 +581,7 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
       externalId,
       phoneNumber: phoneNumber ?? undefined,
       cin: cin ?? undefined,
+      numeroCIN,
       type,
       latitude,
       longitude,

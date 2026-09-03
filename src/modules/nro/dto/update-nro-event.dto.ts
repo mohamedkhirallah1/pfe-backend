@@ -2,7 +2,7 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateNroEventDto {
   @IsString()
-  nroId: string;
+  nroId!: string;
 
   @IsOptional()
   @IsString()

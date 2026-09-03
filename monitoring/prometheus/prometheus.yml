@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'smart-fiber-backend'
+    metrics_path: '/api/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:3001']
+        labels:
+          app: 'smart-fiber-backend'
+          env: 'development'

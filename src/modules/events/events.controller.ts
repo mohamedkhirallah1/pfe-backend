@@ -6,8 +6,10 @@ import {
   Logger,
   Post,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { InternalApiKeyGuard } from '../../common/guards/internal-api-key.guard';
 import { EventsService, InboundEventType } from './events.service';
 
 type EventResponse = {
@@ -19,6 +21,7 @@ type EventResponse = {
 };
 
 @Controller()
+@UseGuards(InternalApiKeyGuard)
 export class EventsController {
   private readonly logger = new Logger(EventsController.name);
 

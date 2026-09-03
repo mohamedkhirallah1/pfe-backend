@@ -1,0 +1,40 @@
+\chapter*{Introduction g\'en\'erale}
+\addcontentsline{toc}{chapter}{Introduction g\'en\'erale}
+
+\section*{Contexte g\'en\'eral}
+Le secteur des t\'el\'ecommunications conna\^it une transformation num\'erique sans pr\'ec\'edent, marqu\'ee par le d\'eploiement massif des r\'eseaux d'acc\`es \`a tr\`es haut d\'ebit en fibre optique jusqu'\`a l'abonn\'e (\textit{Fiber To The Home} - FTTH). Les op\'erateurs t\'el\'ecoms doivent g\'erer des infrastructures optiques complexes compos\'ees de milliers d'\'el\'ements physiques interconnect\'es : N\oe uds de Raccordement Optique (NRO), Sous-r\'epartition Optique (FDT), c\^ables de transport et de distribution, et points de branchement abonn\'es.
+
+Dans cet \'ecosyst\`eme hautement dynamique, la qualit\'e de service (QoS) et l'exp\'erience utilisateur (QoE) reposent sur la capacit\'e \`a d\'etecter, localiser et r\'esoudre les incidents r\'eseau dans les plus brefs d\'elais, tout en pr\'evenant la saturation des \'equipements.
+
+\section*{Probl\'ematique}
+Au sein de l'op\'erateur national \textbf{Tunisie Telecom}, la supervision et la gestion des interventions reposaient traditionnellement sur des outils partiellement h\'et\'erog\`enes et cloisonn\'es. Les \'equipes d'exploitation et les techniciens d'intervention terrain faisaient face \`a plusieurs contraintes critiques :
+\begin{itemize}
+    \item \textbf{Absence de vue cartographique unifi\'ee en temps r\'eel :} Difficult\'e \`a visualiser simultan\'ement sur une m\^eme carte g\'eographique l'\'etat op\'erationnel des NRO, des FDT et des contrats clients rattach\'es.
+    \item \textbf{Latence dans le traitement des \'ev\'enements :} Manque d'un canal de communication bidirectionnel instantan\'e pour notifier les \'equipes des alertes et changements d'\'etat sans rechargement manuel.
+    \item \textbf{Qualification manuelle des r\'eclamations :} Volume important de r\'eclamations d'abonn\'es n\'ecessitant un tri et une affectation manuels souvent chronophages.
+    \item \textbf{Difficult\'e d'anticipation de la saturation :} Absence d'indicateurs pr\'edictifs automatis\'es pour alerter sur le taux de remplissage critique des ports et des capacit\'es d'un NRO avant blocage.
+\end{itemize}
+
+Face \`a ce constat, la probl\'ematique centrale de ce projet de fin d'\'etudes s'articule autour de la question suivante : \textit{Comment concevoir et d\'evelopper une plateforme logicielle moderne, r\'eactive et intellignete, capable de centraliser la supervision cartographique du r\'eseau fibre, de traiter les \'ev\'enements en temps r\'eel et d'apporter une aide \`a la d\'ecision gr\^ace \`a l'intelligence artificielle ?}
+
+\section*{Objectifs du projet}
+Pour r\'epondre \`a ces d\'efis, notre mission a consist\'e \`a concevoir et d\'evelopper une solution compl\`ete comprenant :
+\begin{enumerate}
+    \item Une \textbf{application mobile multiplateforme en Flutter}, offrant une interface ergonomique adapt\'ee aux techniciens terrain et aux superviseurs r\'egionaux, avec navigation par r\^oles (RBAC) et cartographie interactive multi-couches.
+    \item Un \textbf{back-end modulaire et scalable en NestJS (TypeScript)}, exposant des API REST s\'ecuris\'ees, une passerelle WebSocket pour le temps r\'eel (Socket.IO), et une file de traitement asynchrone (BullMQ/Redis).
+    \item Un \textbf{moteur d'intelligence m\'etier (IA)} int\'egrant l'inf\'erence LLM haute vitesse via Groq, renforc\'e par un disjoncteur (\textit{Circuit Breaker}) et des mod\`eles heuristiques pour la classification des tickets et la d\'etection pr\'eventive de la saturation NRO.
+\end{enumerate}
+
+\section*{D\'emarche m\'ethodologique}
+Afin d'assurer une r\'eactivit\'e face aux \'evolutions du besoin et une livraison incr\'ementale de valeur, nous avons adopt\'e la d\'emarche \textbf{Agile Scrum}. Le projet a \'et\'e structur\'e en 3 grandes Releases r\'eparties sur 12 it\'erations (Sprints S0 \`a S11), favorisant une int\'egration continue des retours m\'etier.
+
+\section*{Structure du rapport}
+Le pr\'esent rapport retrace les diff\'erentes phases du projet et s'organise en cinq chapitres principaux :
+\begin{itemize}
+    \item \textbf{Chapitre 1 -- Contexte du projet et \'Etat de l'art :} pr\'esente l'organisme d'accueil Tunisie Telecom, l'\'etude de l'existant, la probl\'ematique m\'etier, la justification des choix m\'ethodologiques et architecturaux, ainsi que l'\'etat de l'art des technologies retenues.
+    \item \textbf{Chapitre 2 -- Analyse des besoins et conception g\'en\'erale :} d\'efinit les exigences fonctionnelles et non fonctionnelles, formalise les cas d'utilisation globaux et expose le mod\`ele de donn\'ees conceptuel du syst\`eme.
+    \item \textbf{Chapitre 3 -- Release 1 : Socle technique, Authentification et Gestion des Utilisateurs :} d\'etaille la mise en place de l'architecture, la s\'ecurit\'e JWT/RBAC et la r\'ealisation des interfaces d'administration des comptes.
+    \item \textbf{Chapitre 4 -- Release 2 : Supervision r\'eseau, Cartographie et Temps r\'eel :} expose la mise en \oe uvre de la cartographie interactive multi-couches, du protocole de diffusion temps r\'eel et des tableaux de bord KPI.
+    \item \textbf{Chapitre 5 -- Release 3 : IA m\'etier, Tests, D\'eploiement et Industrialisation :} pr\'esente l'int\'egration des modules d'intelligence artificielle (Groq LLM \& saturation NRO), la strat\'egie de tests logiciels, le diagramme de d\'eploiement et l'infrastructure de production.
+\end{itemize}
+Le rapport se cl\^oture par une \textbf{Conclusion g\'en\'erale} qui dresse le bilan des r\'ealisations et ouvre des perspectives d'\'evolution pour la solution.

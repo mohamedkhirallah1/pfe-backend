@@ -2,7 +2,7 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class NewReclamationEventDto {
   @IsString()
-  externalId: string;
+  externalId!: string;
 
   @IsOptional()
   @IsString()
@@ -13,10 +13,13 @@ export class NewReclamationEventDto {
   cin?: string;
 
   @IsString()
-  type: string;
+  numeroCIN!: string; // 8 chiffres, required by the Reclamation schema
+
+  @IsString()
+  type!: string;
 
   @IsNumber()
-  latitude: number;
+  latitude!: number;
 
   @IsNumber()
   longitude: number;

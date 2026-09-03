@@ -1,0 +1,134 @@
+\documentclass[12pt,a4paper]{report}
+
+% =========================================================
+% 1. PACKAGES FONDAMENTAUX & TYPOGRAPHIE
+% =========================================================
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{setspace}
+\onehalfspacing
+
+% Marges standard
+\usepackage{geometry}
+\geometry{
+    top=2.5cm,
+    bottom=2.5cm,
+    left=3cm,
+    right=2.5cm
+}
+
+% =========================================================
+% 2. GRAPHIQUES & TABLEAUX
+% =========================================================
+\usepackage{graphicx}
+\graphicspath{{Images/}{images/}}
+\usepackage{pdfpages}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage[table]{xcolor}
+\usepackage{amsmath,amssymb}
+\usepackage{textcomp}
+
+% =========================================================
+% 3. EN-TÊTES ET PIEDS DE PAGE (TOUT EN NOIR)
+% =========================================================
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyhead[R]{\small PFE - Smart Fiber}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.0pt}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[C]{\thepage}
+    \renewcommand{\headrulewidth}{0pt}
+}
+
+% =========================================================
+% 4. FORMATTAGE DES TITRES (TOUS EN NOIR)
+% =========================================================
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{black}}
+  {\chaptertitlename\ \thechapter}{15pt}{\Huge\color{black}}
+\titlespacing*{\chapter}{0pt}{10pt}{25pt}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{black}}{\thesection}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{black}}{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries\color{black}}{\thesubsubsection}{1em}{}
+
+% =========================================================
+% 5. HYPERLIENS & MÉTADONNÉES PDF (TEXTE DES LIENS EN NOIR)
+% =========================================================
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=black,
+    pdftitle={Rapport de Projet de Fin d'Etudes - Smart Fiber Supervision},
+    pdfauthor={Ben Zineb Amir},
+    pdfsubject={Diplôme National d'Ingénieur en Informatique}
+}
+
+% =========================================================
+% DÉBUT DU DOCUMENT
+% =========================================================
+\begin{document}
+
+% ---------------------------------------------------------
+% PAGE DE GARDE & VALIDATION
+% ---------------------------------------------------------
+\includepdf[pages=-]{PageG2.pdf}
+
+% ---------------------------------------------------------
+% PARTIE PRÉLIMINAIRE (Numérotation romaine)
+% ---------------------------------------------------------
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+\include{chapters/00_remerciements}
+\include{chapters/00_resumes}
+
+\tableofcontents
+\newpage
+
+\listoffigures
+\newpage
+
+\listoftables
+\newpage
+
+\include{chapters/00_abbreviations}
+\newpage
+
+% ---------------------------------------------------------
+% CORPS DU RAPPORT (Numérotation arabe : 1, 2, 3...)
+% Structure exacte correspondant à votre rapport de 89 pages
+% ---------------------------------------------------------
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\include{chapters/introduction}     % Introduction générale
+\include{chapters/contexte}         % Chapitre 1 : Contexte du projet et État de l'art
+\include{chapters/requirements}     % Chapitre 2 : Analyse des besoins et conception générale
+\include{chapters/sprint_socle}     % Chapitre 3 : Release 1 : Socle technique, Authentification et Gestion des Utilisateurs
+\include{chapters/sprint_superv}    % Chapitre 4 : Release 2 : Supervision réseau, Cartographie et Temps réel
+\include{chapters/sprint_ia_deploy} % Chapitre 5 : Release 3 : IA métier, Tests, Déploiement et Industrialisation
+\include{chapters/conclusion}       % Conclusion générale et Perspectives
+\include{chapters/netographie}      % Netographie
+
+\end{document}

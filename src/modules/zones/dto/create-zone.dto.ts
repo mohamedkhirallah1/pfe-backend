@@ -4,10 +4,10 @@ import { Type } from 'class-transformer';
 class PolygonGeometryDto {
   @IsString()
   @IsNotEmpty()
-  type: 'Polygon';
+  type!: 'Polygon';
 
   @IsArray()
-  coordinates: number[][][];
+  coordinates!: number[][][];
 }
 
 export class CreateZoneDto {

@@ -2,10 +2,10 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class NewNroEventDto {
   @IsString()
-  nroId: string;
+  nroId!: string;
 
   @IsString()
-  name: string;
+  name!: string;
 
   @IsOptional()
   @IsString()
@@ -16,11 +16,11 @@ export class NewNroEventDto {
   regionName?: string;
 
   @IsNumber()
-  latitude: number;
+  latitude!: number;
 
   @IsNumber()
-  longitude: number;
+  longitude!: number;
 
   @IsNumber()
-  maxCapacity: number;
+  maxCapacity!: number;
 }

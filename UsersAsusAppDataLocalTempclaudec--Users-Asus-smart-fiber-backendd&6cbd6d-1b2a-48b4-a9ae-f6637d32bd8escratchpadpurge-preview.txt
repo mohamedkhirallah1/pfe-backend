@@ -1,0 +1,94 @@
+=== NRO (31) ===
+{"externalId":"NRO-TEST-1775782135446","createdAt":"2026-04-10T00:48:55.519Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782135448","createdAt":"2026-04-10T00:48:55.544Z","name":"NRO TEST","status":"SATURATED"}
+{"externalId":"NRO-TEST-1775782135476","createdAt":"2026-04-10T00:48:55.649Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782135479","createdAt":"2026-04-10T00:48:55.689Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782137454","createdAt":"2026-04-10T00:48:57.466Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782137457","createdAt":"2026-04-10T00:48:57.483Z","name":"NRO TEST","status":"SATURATED"}
+{"externalId":"NRO-TEST-1775782137876","createdAt":"2026-04-10T00:48:57.885Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782137969","createdAt":"2026-04-10T00:48:57.978Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782138065","createdAt":"2026-04-10T00:48:58.073Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782139433","createdAt":"2026-04-10T00:48:59.458Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782139435","createdAt":"2026-04-10T00:48:59.473Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782139437","createdAt":"2026-04-10T00:48:59.483Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782139439","createdAt":"2026-04-10T00:48:59.491Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782139802","createdAt":"2026-04-10T00:48:59.811Z","name":"NRO TEST","status":"SATURATED"}
+{"externalId":"NRO-TEST-1775782170964","createdAt":"2026-04-10T00:49:30.974Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782170972","createdAt":"2026-04-10T00:49:30.987Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782170987","createdAt":"2026-04-10T00:49:31.047Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782171074","createdAt":"2026-04-10T00:49:31.082Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782196876","createdAt":"2026-04-10T00:49:56.888Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782196883","createdAt":"2026-04-10T00:49:56.901Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782196908","createdAt":"2026-04-10T00:49:56.966Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782197195","createdAt":"2026-04-10T00:49:57.204Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782216344","createdAt":"2026-04-10T00:50:16.350Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775782293011","createdAt":"2026-04-10T00:51:33.019Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775783571833","createdAt":"2026-04-10T01:12:51.845Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775783571898","createdAt":"2026-04-10T01:12:51.912Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775783571900","createdAt":"2026-04-10T01:12:51.930Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775783571922","createdAt":"2026-04-10T01:12:52.015Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775783571963","createdAt":"2026-04-10T01:12:52.043Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775783572250","createdAt":"2026-04-10T01:12:52.260Z","name":"NRO TEST","status":"ACTIVE"}
+{"externalId":"NRO-TEST-1775783603626","createdAt":"2026-04-10T01:13:23.633Z","name":"NRO TEST","status":"ACTIVE"}
+
+=== FDT (29) ===
+{"externalId":"fdt-contract-EXT-TEST-1775782135465","createdAt":"2026-04-10T00:48:55.625Z","nroId":"NRO-TUN-LAF-001"}
+{"externalId":"fdt-contract-EXT-TEST-1775782135476","createdAt":"2026-04-10T00:48:55.672Z","nroId":"NRO-TUN-LAF-001"}
+{"externalId":"fdt-contract-EXT-TEST-1775782135505","createdAt":"2026-04-10T00:48:55.736Z","nroId":"NRO-TUN-LAF-001"}
+{"externalId":"fdt-contract-EXT-TEST-1775782137462","createdAt":"2026-04-10T00:48:57.506Z","nroId":"NRO-TUN-LAF-001"}
+{"externalId":"fdt-contract-EXT-TEST-1775782137481","createdAt":"2026-04-10T00:48:57.538Z","nroId":"NRO-TUN-LAF-001"}
+{"externalId":"fdt-contract-EXT-TEST-1775782137883","createdAt":"2026-04-10T00:48:57.906Z","nroId":"NRO-TUN-LAF-001"}
+{"externalId":"fdt-contract-EXT-TEST-1775782137977","createdAt":"2026-04-10T00:48:57.997Z","nroId":"NRO-TEST-1775782135448"}
+{"externalId":"fdt-contract-EXT-TEST-1775782138072","createdAt":"2026-04-10T00:48:58.094Z","nroId":"NRO-TEST-1775782135448"}
+{"externalId":"fdt-contract-EXT-TEST-1775782139447","createdAt":"2026-04-10T00:48:59.520Z","nroId":"NRO-TEST-1775782135448"}
+{"externalId":"fdt-contract-EXT-TEST-1775782139451","createdAt":"2026-04-10T00:48:59.555Z","nroId":"NRO-TEST-1775782135448"}
+{"externalId":"fdt-contract-EXT-TEST-1775782139452","createdAt":"2026-04-10T00:48:59.581Z","nroId":"NRO-TEST-1775782135448"}
+{"externalId":"fdt-contract-EXT-TEST-1775782139809","createdAt":"2026-04-10T00:48:59.831Z","nroId":"NRO-TEST-1775782135448"}
+{"externalId":"fdt-contract-EXT-TEST-1775782170972","createdAt":"2026-04-10T00:49:31.012Z","nroId":"NRO-TEST-1775782137457"}
+{"externalId":"fdt-contract-EXT-TEST-1775782170984","createdAt":"2026-04-10T00:49:31.036Z","nroId":"NRO-TEST-1775782137457"}
+{"externalId":"fdt-contract-EXT-TEST-1775782170996","createdAt":"2026-04-10T00:49:31.067Z","nroId":"NRO-TEST-1775782137457"}
+{"externalId":"fdt-contract-EXT-TEST-1775782171080","createdAt":"2026-04-10T00:49:31.102Z","nroId":"NRO-TEST-1775782137457"}
+{"externalId":"fdt-contract-EXT-TEST-1775782196885","createdAt":"2026-04-10T00:49:56.930Z","nroId":"NRO-TEST-1775782137457"}
+{"externalId":"fdt-contract-EXT-TEST-1775782196897","createdAt":"2026-04-10T00:49:56.953Z","nroId":"NRO-TEST-1775782137457"}
+{"externalId":"fdt-contract-EXT-TEST-1775782196916","createdAt":"2026-04-10T00:49:56.980Z","nroId":"NRO-TEST-1775782139802"}
+{"externalId":"fdt-contract-EXT-TEST-1775782197202","createdAt":"2026-04-10T00:49:57.225Z","nroId":"NRO-TEST-1775782139802"}
+{"externalId":"fdt-contract-EXT-TEST-1775782216349","createdAt":"2026-04-10T00:50:16.366Z","nroId":"NRO-TEST-1775782139802"}
+{"externalId":"fdt-contract-EXT-TEST-1775782293017","createdAt":"2026-04-10T00:51:33.035Z","nroId":"NRO-TEST-1775782139802"}
+{"externalId":"fdt-contract-EXT-TEST-1775783571843","createdAt":"2026-04-10T01:12:51.869Z","nroId":"NRO-TEST-1775782139802"}
+{"externalId":"fdt-contract-EXT-TEST-1775783571906","createdAt":"2026-04-10T01:12:51.965Z","nroId":"NRO-TEST-1775782139802"}
+{"externalId":"fdt-contract-EXT-TEST-1775783571915","createdAt":"2026-04-10T01:12:52.001Z","nroId":"NRO-TEST-1775783571900"}
+{"externalId":"fdt-contract-EXT-TEST-1775783571935","createdAt":"2026-04-10T01:12:52.032Z","nroId":"NRO-TEST-1775783571922"}
+{"externalId":"fdt-contract-EXT-TEST-1775783571975","createdAt":"2026-04-10T01:12:52.058Z","nroId":"NRO-TEST-1775783571963"}
+{"externalId":"fdt-contract-EXT-TEST-1775783572258","createdAt":"2026-04-10T01:12:52.282Z","nroId":"NRO-TEST-1775783571963"}
+{"externalId":"fdt-contract-EXT-TEST-1775783603632","createdAt":"2026-04-10T01:13:23.647Z","nroId":"NRO-TEST-1775783572250"}
+
+=== CONTRACTS (29) ===
+{"externalId":"EXT-TEST-1775782135465","cin":"12345678","createdAt":"2026-04-10T00:48:55.630Z","fdtId":"fdt-contract-EXT-TEST-1775782135465","nroId":"NRO-TUN-LAF-001","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782135476","cin":"12345678","createdAt":"2026-04-10T00:48:55.676Z","fdtId":"fdt-contract-EXT-TEST-1775782135476","nroId":"NRO-TUN-LAF-001","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782135505","cin":"12345678","createdAt":"2026-04-10T00:48:55.740Z","fdtId":"fdt-contract-EXT-TEST-1775782135505","nroId":"NRO-TUN-LAF-001","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782137462","cin":"12345678","createdAt":"2026-04-10T00:48:57.511Z","fdtId":"fdt-contract-EXT-TEST-1775782137462","nroId":"NRO-TUN-LAF-001","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782137481","cin":"12345678","createdAt":"2026-04-10T00:48:57.541Z","fdtId":"fdt-contract-EXT-TEST-1775782137481","nroId":"NRO-TUN-LAF-001","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782137883","cin":"12345678","createdAt":"2026-04-10T00:48:57.909Z","fdtId":"fdt-contract-EXT-TEST-1775782137883","nroId":"NRO-TUN-LAF-001","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782137977","cin":"12345678","createdAt":"2026-04-10T00:48:58.000Z","fdtId":"fdt-contract-EXT-TEST-1775782137977","nroId":"NRO-TEST-1775782135448","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782138072","cin":"12345678","createdAt":"2026-04-10T00:48:58.098Z","fdtId":"fdt-contract-EXT-TEST-1775782138072","nroId":"NRO-TEST-1775782135448","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782139447","cin":"12345678","createdAt":"2026-04-10T00:48:59.524Z","fdtId":"fdt-contract-EXT-TEST-1775782139447","nroId":"NRO-TEST-1775782135448","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782139451","cin":"12345678","createdAt":"2026-04-10T00:48:59.559Z","fdtId":"fdt-contract-EXT-TEST-1775782139451","nroId":"NRO-TEST-1775782135448","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782139452","cin":"12345678","createdAt":"2026-04-10T00:48:59.584Z","fdtId":"fdt-contract-EXT-TEST-1775782139452","nroId":"NRO-TEST-1775782135448","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782139809","cin":"12345678","createdAt":"2026-04-10T00:48:59.834Z","fdtId":"fdt-contract-EXT-TEST-1775782139809","nroId":"NRO-TEST-1775782135448","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782170972","cin":"12345678","createdAt":"2026-04-10T00:49:31.018Z","fdtId":"fdt-contract-EXT-TEST-1775782170972","nroId":"NRO-TEST-1775782137457","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782170984","cin":"12345678","createdAt":"2026-04-10T00:49:31.039Z","fdtId":"fdt-contract-EXT-TEST-1775782170984","nroId":"NRO-TEST-1775782137457","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782170996","cin":"12345678","createdAt":"2026-04-10T00:49:31.069Z","fdtId":"fdt-contract-EXT-TEST-1775782170996","nroId":"NRO-TEST-1775782137457","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782171080","cin":"12345678","createdAt":"2026-04-10T00:49:31.105Z","fdtId":"fdt-contract-EXT-TEST-1775782171080","nroId":"NRO-TEST-1775782137457","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782196885","cin":"12345678","createdAt":"2026-04-10T00:49:56.933Z","fdtId":"fdt-contract-EXT-TEST-1775782196885","nroId":"NRO-TEST-1775782137457","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782196897","cin":"12345678","createdAt":"2026-04-10T00:49:56.955Z","fdtId":"fdt-contract-EXT-TEST-1775782196897","nroId":"NRO-TEST-1775782137457","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782196916","cin":"12345678","createdAt":"2026-04-10T00:49:56.982Z","fdtId":"fdt-contract-EXT-TEST-1775782196916","nroId":"NRO-TEST-1775782139802","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782197202","cin":"12345678","createdAt":"2026-04-10T00:49:57.229Z","fdtId":"fdt-contract-EXT-TEST-1775782197202","nroId":"NRO-TEST-1775782139802","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782216349","cin":"12345678","createdAt":"2026-04-10T00:50:16.369Z","fdtId":"fdt-contract-EXT-TEST-1775782216349","nroId":"NRO-TEST-1775782139802","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775782293017","cin":"12345678","createdAt":"2026-04-10T00:51:33.038Z","fdtId":"fdt-contract-EXT-TEST-1775782293017","nroId":"NRO-TEST-1775782139802","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775783571843","cin":"12345678","createdAt":"2026-04-10T01:12:51.872Z","fdtId":"fdt-contract-EXT-TEST-1775783571843","nroId":"NRO-TEST-1775782139802","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775783571906","cin":"12345678","createdAt":"2026-04-10T01:12:51.970Z","fdtId":"fdt-contract-EXT-TEST-1775783571906","nroId":"NRO-TEST-1775782139802","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775783571915","cin":"12345678","createdAt":"2026-04-10T01:12:52.004Z","fdtId":"fdt-contract-EXT-TEST-1775783571915","nroId":"NRO-TEST-1775783571900","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775783571935","cin":"12345678","createdAt":"2026-04-10T01:12:52.034Z","fdtId":"fdt-contract-EXT-TEST-1775783571935","nroId":"NRO-TEST-1775783571922","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775783571975","cin":"12345678","createdAt":"2026-04-10T01:12:52.061Z","fdtId":"fdt-contract-EXT-TEST-1775783571975","nroId":"NRO-TEST-1775783571963","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775783572258","cin":"12345678","createdAt":"2026-04-10T01:12:52.285Z","fdtId":"fdt-contract-EXT-TEST-1775783572258","nroId":"NRO-TEST-1775783571963","phoneNumber":"212345678","status":"ACTIVE"}
+{"externalId":"EXT-TEST-1775783603632","cin":"12345678","createdAt":"2026-04-10T01:13:23.649Z","fdtId":"fdt-contract-EXT-TEST-1775783603632","nroId":"NRO-TEST-1775783572250","phoneNumber":"212345678","status":"ACTIVE"}

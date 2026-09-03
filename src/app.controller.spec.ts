@@ -16,10 +16,10 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return service health', () => {
-      expect(appController.getHealth()).toEqual({
-        status: 'ok',
-        service: 'smart-fiber-backend',
-      });
+      const health = appController.getHealth();
+      expect(health.status).toBe('ok');
+      expect(health.timestamp).toBeDefined();
+      expect(typeof health.uptime).toBe('number');
     });
   });
 });

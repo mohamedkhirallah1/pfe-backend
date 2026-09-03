@@ -15,7 +15,7 @@ type AuthenticatedRequest = {
 
 @Controller('map')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles(AppRole.ADMIN, AppRole.RESPONSABLE_ZONE)
+@Roles(AppRole.ADMIN, AppRole.RESPONSABLE_ZONE, AppRole.SERVICE_CLIENT)
 export class MapController {
   constructor(private readonly mapService: MapService) {}
 
@@ -27,6 +27,17 @@ export class MapController {
   @Get('reclamations')
   getReclamations(@Req() req: AuthenticatedRequest) {
     return this.mapService.getReclamations(req.user);
+  }
+
+  /** Alias of /reclamations under the "complaints" name used by other parts of the platform (AI Supervisor). */
+  @Get('complaints')
+  getComplaints(@Req() req: AuthenticatedRequest) {
+    return this.mapService.getReclamations(req.user);
+  }
+
+  @Get('centrales')
+  getCentrales(@Req() req: AuthenticatedRequest) {
+    return this.mapService.getCentrales(req.user);
   }
 
   @Get('nros')
@@ -49,8 +60,30 @@ export class MapController {
     return this.mapService.getZoneById(id, req.user);
   }
 
+  /** Zone -> Centrales -> NROs -> FDTs -> Contracts, fully nested (Step 5: hierarchical map API). */
+  @Get('hierarchy')
+  getHierarchy(@Req() req: AuthenticatedRequest) {
+    return this.mapService.getHierarchy(req.user);
+  }
+
+  /** Per-zone counts/capacity/health, computed through the real hierarchy (Step 4). */
+  @Get('zones/statistics')
+  getZoneStatistics(@Req() req: AuthenticatedRequest) {
+    return this.mapService.getZoneStatistics(req.user);
+  }
+
   @Get('dashboard')
   getDashboard(@Req() req: AuthenticatedRequest) {
     return this.mapService.getDashboard(req.user);
+  }
+
+  @Get('central-fibers')
+  getCentralFibersMap(@Req() req: AuthenticatedRequest) {
+    return this.mapService.getCentralFibersMap(req.user);
+  }
+
+  @Get('topology-graph')
+  getTopologyGraph(@Req() req: AuthenticatedRequest) {
+    return this.mapService.getTopologyGraph(req.user);
   }
 }

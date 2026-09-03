@@ -3,6 +3,9 @@
 /node_modules
 /build
 
+# DB migration backups (contain data dumps, not source)
+/backups
+
 # Logs
 logs
 *.log
@@ -45,6 +48,7 @@ lerna-debug.log*
 # temp directory
 .temp
 .tmp
+/tmp
 
 # Runtime data
 pids
@@ -54,3 +58,4 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+/data

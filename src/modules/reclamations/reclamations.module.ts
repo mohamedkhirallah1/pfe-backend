@@ -5,6 +5,7 @@ import { ContractsModule } from '../contracts/contracts.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { NroModule } from '../nro/nro.module';
 import { ZonesModule } from '../zones/zones.module';
+import { WebsocketServerModule } from '../websocket-server/websocket-server.module';
 import { Reclamation, ReclamationSchema } from './schemas/reclamation.schema';
 import { ReclamationsService } from './reclamations.service';
 import { ReclamationsController } from './controllers/reclamations.controller';
@@ -17,6 +18,7 @@ import { ReclamationsController } from './controllers/reclamations.controller';
     NotificationsModule,
     NroModule,
     ContractsModule,
+    WebsocketServerModule,
   ],
   providers: [ReclamationsService],
   controllers: [ReclamationsController],

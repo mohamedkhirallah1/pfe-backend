@@ -32,7 +32,47 @@ export const TUNISIA_REGION_CENTERS: Record<TunisiaRegion, RegionCenter> = {
   Tataouine: { lat: 32.9297, lng: 10.4518 },
 };
 
+export const TUNISIA_ISO_REGION_MAP: Record<string, TunisiaRegion> = {
+  'TN-11': 'Tunis',
+  'TN-12': 'Ariana',
+  'TN-13': 'Ben Arous',
+  'TN-14': 'Manouba',
+  'TN-21': 'Nabeul',
+  'TN-22': 'Zaghouan',
+  'TN-23': 'Bizerte',
+  'TN-31': 'Beja',
+  'TN-32': 'Jendouba',
+  'TN-33': 'Le Kef',
+  'TN-34': 'Siliana',
+  'TN-41': 'Kairouan',
+  'TN-42': 'Kasserine',
+  'TN-43': 'Sidi Bouzid',
+  'TN-51': 'Sousse',
+  'TN-52': 'Monastir',
+  'TN-53': 'Mahdia',
+  'TN-54': 'Sfax',
+  'TN-61': 'Gafsa',
+  'TN-62': 'Tozeur',
+  'TN-63': 'Kebili',
+  'TN-71': 'Gabes',
+  'TN-72': 'Medenine',
+  'TN-73': 'Tataouine',
+};
+
 export function normalizeTunisiaRegionName(regionName: string): TunisiaRegion | null {
+  if (!regionName || typeof regionName !== 'string') return null;
+
+  const rawUpper = regionName.trim().toUpperCase();
+  if (TUNISIA_ISO_REGION_MAP[rawUpper]) {
+    return TUNISIA_ISO_REGION_MAP[rawUpper];
+  }
+
+  // Also handle without hyphen: e.g. "TN41" -> "TN-41"
+  const formattedIso = rawUpper.replace(/^(TN)(\d{2})$/, '$1-$2');
+  if (TUNISIA_ISO_REGION_MAP[formattedIso]) {
+    return TUNISIA_ISO_REGION_MAP[formattedIso];
+  }
+
   const normalizeToken = (value: string): string =>
     value
       .trim()
